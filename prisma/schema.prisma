@@ -9,9 +9,10 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DIRECT_URL")
 }
+
 
 enum Role {
   PARTNER
@@ -70,3 +71,4 @@ model CalendarLink {
   hostInfo   HostInfo @relation(fields: [hostInfoId], references: [id])
   hostInfoId Int
 }
+
