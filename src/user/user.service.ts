@@ -3,11 +3,12 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { JwtService } from '@nestjs/jwt';
+
 
 @Injectable()
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
-
   // Méthode pour trouver un utilisateur par email
   async findByEmail(email: string): Promise<User | null> {
     if (!email) {
@@ -34,52 +35,6 @@ export class UserService {
     });
 
     return user;
-  }
-
-  async createUser(data: {
-    email: string;
-    password: string;
-    firstname: string;
-    lastname: string;
-    role: 'PARTNER' | 'HOST';
-    phone: string;
-    siret?: string;
-    city?: string;
-    iban?: string;
-  }): Promise<User> {
-    // Hachage du mot de passe
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(data.password, saltRounds);
-
-    // Création de l'utilisateur dans la base de données
-    const newUser = await this.prisma.user.create({
-      data: {
-        email: data.email,
-        password: hashedPassword, // Stocke le mot de passe haché
-        firstname: data.firstname,
-        lastname: data.lastname,
-        Role: data.role,
-        phone: data.phone,
-      },
-    });
-
-    // Si l'utilisateur a le rôle PARTNER, créer une entrée dans PartnerInfo
-    if (data.role === 'PARTNER') {
-      await this.prisma.partnerInfo.create({
-        data: {
-          user: {
-            connect: {
-              id: newUser.id, // Connecte l'entrée PartnerInfo au nouvel utilisateur créé
-            },
-          },
-          siret: data.siret,
-          city: data.city,
-          iban: data.iban || '', // Ajouter l'IBAN
-        },
-      });
-    }
-
-    return newUser;
   }
 
   async updateUser(id: number, updateUserDto: UpdateUserDto): Promise<User> {

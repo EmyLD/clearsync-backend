@@ -10,12 +10,11 @@ datasource db {
 model User {
   id          Int           @id @default(autoincrement())
   email       String        @unique
-  firstname   String
-  lastname    String
+  firstname   String?
+  lastname    String?
   password    String
   Role        Role
-  phone       String
-  idCardFile  String?
+  phone       String?       @unique
   createdAt   DateTime      @default(now())
   HostInfo    HostInfo[]
   PartnerInfo PartnerInfo[]
@@ -24,10 +23,9 @@ model User {
 model PartnerInfo {
   id          Int          @id @default(autoincrement())
   userId      Int
-  siret       String
-  city        String
+  siret       String       @unique
   kbisFile    String?
-  iban        String
+  iban        String       @unique
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @default(now())
   user        User         @relation(fields: [userId], references: [id])
@@ -37,43 +35,49 @@ model PartnerInfo {
 model HostInfo {
   id           Int            @id @default(autoincrement())
   userId       Int
-  address      String
-  postalCode   String
-  city         String
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @default(now())
-  iban         String?
-  airbnbLinks  AirbnbLink[]
+  airbnbLinks  AirbnbInfo[]
   CalendarLink CalendarLink[]
   user         User           @relation(fields: [userId], references: [id])
   prestations  Prestation[]
 }
 
-model AirbnbLink {
-  id         Int      @id @default(autoincrement())
-  link       String
+model AirbnbInfo {
+  id         Int          @id @default(autoincrement())
+  link       String       @unique
   hostInfoId Int
-  hostInfo   HostInfo @relation(fields: [hostInfoId], references: [id])
+  adress     String
+  postalCode String
+  surface    Int
+  nbrOfRoom  Int
+  city       String
+  hostInfo   HostInfo     @relation(fields: [hostInfoId], references: [id])
+  Prestation Prestation[]
 }
 
 model CalendarLink {
   id         Int      @id @default(autoincrement())
-  link       String
+  link       String   @unique
   hostInfoId Int
   hostInfo   HostInfo @relation(fields: [hostInfoId], references: [id])
 }
 
 model Prestation {
-  id          Int         @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   hostId      Int
   partnerId   Int
+  airbnbId    Int // Clé étrangère pour AirbnbInfo
   description String
-  surface     Int
   price       Float
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @default(now())
-  host        HostInfo    @relation(fields: [hostId], references: [id])
-  partner     PartnerInfo @relation(fields: [partnerId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+
+  host    HostInfo    @relation(fields: [hostId], references: [id])
+  partner PartnerInfo @relation(fields: [partnerId], references: [id])
+  airbnb  AirbnbInfo  @relation(fields: [airbnbId], references: [id]) // Relation avec AirbnbInfo
+
+  @@index([airbnbId]) // Index sur airbnbId pour optimiser les requêtes
 }
 
 enum Role {

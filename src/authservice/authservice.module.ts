@@ -3,6 +3,7 @@ import { AuthService } from './authservice.service';
 import { AuthController } from './authservice.controller';
 import { UserModule } from 'src/user/user.module';
 import { JwtModule } from '@nestjs/jwt';
+import { PrismaModule } from 'src/prisma/prisma.module';
 
 @Module({
   controllers: [AuthController],
@@ -13,6 +14,7 @@ import { JwtModule } from '@nestjs/jwt';
       secret: process.env.JWT_SECRET || 'default-secret', // Ajoutez votre clé secrète
       signOptions: { expiresIn: '1h' }, // Options de signature du JWT
     }),
+    PrismaModule,
   ],
 })
 export class AuthserviceModule {}

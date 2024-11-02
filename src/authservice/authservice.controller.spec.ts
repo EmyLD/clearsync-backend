@@ -1,17 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuthserviceController } from './authservice.controller';
-import { AuthserviceService } from './authservice.service';
+import { AuthController } from './authservice.controller';
+import { AuthService } from './authservice.service';
 
 describe('AuthserviceController', () => {
-  let controller: AuthserviceController;
+  let controller: AuthController;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [AuthserviceController],
-      providers: [AuthserviceService],
+      controllers: [AuthController],
+      providers: [AuthService],
     }).compile();
 
-    controller = module.get<AuthserviceController>(AuthserviceController);
+    // Correction : récupérez l'instance du contrôleur
+    controller = module.get<AuthController>(AuthController);
   });
 
   it('should be defined', () => {
