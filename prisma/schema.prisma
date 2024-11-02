@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,12 +5,6 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DIRECT_URL")
-}
-
-
-enum Role {
-  PARTNER
-  HOST
 }
 
 model User {
@@ -29,49 +17,50 @@ model User {
   phone       String
   idCardFile  String?
   createdAt   DateTime      @default(now())
-  PartnerInfo PartnerInfo[]
   HostInfo    HostInfo[]
+  PartnerInfo PartnerInfo[]
 }
 
 model PartnerInfo {
   id          Int          @id @default(autoincrement())
-  user        User         @relation(fields: [userId], references: [id])
   userId      Int
   siret       String
   city        String
-  kbisFile    String
+  kbisFile    String?
+  iban        String
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @default(now())
-  prestations Prestation[] // Relation avec Prestation
+  user        User         @relation(fields: [userId], references: [id])
+  prestations Prestation[]
 }
 
 model HostInfo {
   id           Int            @id @default(autoincrement())
-  user         User           @relation(fields: [userId], references: [id])
   userId       Int
   address      String
   postalCode   String
   city         String
-  calendarLink String?
-  airbnbLinks  AirbnbLink[]
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @default(now())
+  iban         String?
+  airbnbLinks  AirbnbLink[]
   CalendarLink CalendarLink[]
-  prestations  Prestation[]   // Relation avec Prestation
+  user         User           @relation(fields: [userId], references: [id])
+  prestations  Prestation[]
 }
 
 model AirbnbLink {
   id         Int      @id @default(autoincrement())
   link       String
-  hostInfo   HostInfo @relation(fields: [hostInfoId], references: [id])
   hostInfoId Int
+  hostInfo   HostInfo @relation(fields: [hostInfoId], references: [id])
 }
 
 model CalendarLink {
   id         Int      @id @default(autoincrement())
   link       String
-  hostInfo   HostInfo @relation(fields: [hostInfoId], references: [id])
   hostInfoId Int
+  hostInfo   HostInfo @relation(fields: [hostInfoId], references: [id])
 }
 
 model Prestation {
@@ -83,7 +72,11 @@ model Prestation {
   price       Float
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @default(now())
-
   host        HostInfo    @relation(fields: [hostId], references: [id])
   partner     PartnerInfo @relation(fields: [partnerId], references: [id])
+}
+
+enum Role {
+  PARTNER
+  HOST
 }
