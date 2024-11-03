@@ -8,9 +8,11 @@ import { PrismaModule } from './prisma/prisma.module';
 import { UserService } from './user/user.service';
 import { HostModule } from './host/host.module';
 import { PartnerModule } from './partner/partner.module';
+import { PrestationModule } from './prestation/prestation.module';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
-  imports: [SupabaseModule, AuthserviceModule, PrismaModule, HostModule, PartnerModule],
+  imports: [SupabaseModule, AuthserviceModule, PrismaModule, HostModule, PartnerModule, PrestationModule, NotificationModule],
   controllers: [AppController],
   providers: [AppService],
 })

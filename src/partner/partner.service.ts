@@ -15,8 +15,6 @@ export class PartnerService {
       where: { id: Number(userId) },
     });
 
-    
-
     if (!user) {
       throw new Error('Utilisateur non trouvé');
     }
@@ -40,7 +38,6 @@ export class PartnerService {
     const partnerInfo = await this.prisma.partnerInfo.findFirst({
       where: { userId: userId },
     });
-    console.log(partnerInfo);
 
     if (partnerInfo) {
       return partnerInfo;

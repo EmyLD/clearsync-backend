@@ -28,6 +28,7 @@ model PartnerInfo {
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @default(now())
   iban        String       @unique
+  pushToken   String?      // Nouvelle colonne pour stocker le token de notification
   user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   prestations Prestation[]
 }
@@ -49,14 +50,14 @@ model AirbnbInfo {
 model Prestation {
   id          Int         @id @default(autoincrement())
   hostId      Int
-  partnerId   Int
+  partnerId   Int?
   description String
   price       Float
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @default(now())
   airbnbId    Int
   airbnb      AirbnbInfo  @relation(fields: [airbnbId], references: [id])
-  partner     PartnerInfo @relation(fields: [partnerId], references: [id])
+  partner     PartnerInfo? @relation(fields: [partnerId], references: [id]) 
 
   @@index([airbnbId])
 }
