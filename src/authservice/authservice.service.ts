@@ -33,11 +33,13 @@ export class AuthService {
     email: string;
     password: string;
     Role: 'HOST' | 'PARTNER';
+    firstname?: string;
+    lastname?: string;
+    phone?: string;
   }): Promise<{ access_token: string; user: User }> {
     // Hachage du mot de passe
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(data.password, saltRounds);
-    console.log(data);
 
     // Création de l'utilisateur dans la base de données
     const newUser = await this.prisma.user.create({
@@ -45,6 +47,9 @@ export class AuthService {
         email: data.email,
         password: hashedPassword,
         Role: data.Role === 'HOST' ? 'HOST' : 'PARTNER',
+        firstname: data.firstname,
+        lastname: data.lastname,
+        phone: data.phone,
       },
     });
 

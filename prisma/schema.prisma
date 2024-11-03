@@ -16,7 +16,7 @@ model User {
   Role        Role
   phone       String?       @unique
   createdAt   DateTime      @default(now())
-  HostInfo    HostInfo[]
+  airbnbLinks AirbnbInfo[]
   PartnerInfo PartnerInfo[]
 }
 
@@ -25,59 +25,40 @@ model PartnerInfo {
   userId      Int
   siret       String       @unique
   kbisFile    String?
-  iban        String       @unique
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @default(now())
-  user        User         @relation(fields: [userId], references: [id])
+  iban        String       @unique
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   prestations Prestation[]
 }
 
-model HostInfo {
-  id           Int            @id @default(autoincrement())
-  userId       Int
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @default(now())
-  airbnbLinks  AirbnbInfo[]
-  CalendarLink CalendarLink[]
-  user         User           @relation(fields: [userId], references: [id])
-  prestations  Prestation[]
-}
-
 model AirbnbInfo {
-  id         Int          @id @default(autoincrement())
-  link       String       @unique
-  hostInfoId Int
-  adress     String
-  postalCode String
-  surface    Int
-  nbrOfRoom  Int
-  city       String
-  hostInfo   HostInfo     @relation(fields: [hostInfoId], references: [id])
-  Prestation Prestation[]
-}
-
-model CalendarLink {
-  id         Int      @id @default(autoincrement())
-  link       String   @unique
-  hostInfoId Int
-  hostInfo   HostInfo @relation(fields: [hostInfoId], references: [id])
+  id           Int          @id @default(autoincrement())
+  link         String       @unique
+  adress       String
+  postalCode   String
+  surface      Int
+  nbrOfRoom    Int
+  city         String
+  calendarlink String?
+  userId       Int?
+  user         User?        @relation(fields: [userId], references: [id])
+  Prestation   Prestation[]
 }
 
 model Prestation {
-  id          Int      @id @default(autoincrement())
+  id          Int         @id @default(autoincrement())
   hostId      Int
   partnerId   Int
-  airbnbId    Int // Clé étrangère pour AirbnbInfo
   description String
   price       Float
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now())
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @default(now())
+  airbnbId    Int
+  airbnb      AirbnbInfo  @relation(fields: [airbnbId], references: [id])
+  partner     PartnerInfo @relation(fields: [partnerId], references: [id])
 
-  host    HostInfo    @relation(fields: [hostId], references: [id])
-  partner PartnerInfo @relation(fields: [partnerId], references: [id])
-  airbnb  AirbnbInfo  @relation(fields: [airbnbId], references: [id]) // Relation avec AirbnbInfo
-
-  @@index([airbnbId]) // Index sur airbnbId pour optimiser les requêtes
+  @@index([airbnbId])
 }
 
 enum Role {
