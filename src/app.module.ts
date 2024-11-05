@@ -10,10 +10,28 @@ import { HostModule } from './host/host.module';
 import { PartnerModule } from './partner/partner.module';
 import { PrestationModule } from './prestation/prestation.module';
 import { NotificationModule } from './notification/notification.module';
+import { NotificationService } from './notification/notification.service';
+import { PrestationsService } from './prestation/prestation.service';
+import { PrismaService } from './prisma/prisma.service';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
-  imports: [SupabaseModule, AuthserviceModule, PrismaModule, HostModule, PartnerModule, PrestationModule, NotificationModule],
+  imports: [
+    SupabaseModule,
+    AuthserviceModule,
+    PrismaModule,
+    HostModule,
+    PartnerModule,
+    PrestationModule,
+    NotificationModule,
+    ScheduleModule.forRoot(),
+  ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    PrestationsService,
+    PrismaService,
+    NotificationService,
+  ],
 })
 export class AppModule {}

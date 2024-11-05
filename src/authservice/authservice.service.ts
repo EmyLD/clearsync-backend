@@ -23,10 +23,14 @@ export class AuthService {
 
   async login(user: User) {
     const payload = { username: user.email, sub: user.id };
-    return {
-      access_token: this.jwtService.sign(payload),
-      user,
-    };
+    try {
+      return {
+        access_token: this.jwtService.sign(payload),
+        user,
+      };
+    } catch (error) {
+      throw new Error('Erreur lors de la connexion');
+    }
   }
 
   async createUser(data: {

@@ -21,7 +21,28 @@ import { log } from 'console';
 export class HostController {
   private readonly httpService: HttpService;
   constructor(private readonly hostService: HostService) {}
-
+  @Get(':hostId/past-prestations')
+  async getPastPrestations(@Param('hostId', ParseIntPipe) hostId: number) {
+    try {
+      const prestations =
+        await this.hostService.getPastPrestationsByHostId(hostId);
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Prestations passées récupérées avec succès',
+        data: prestations,
+      };
+    } catch (error) {
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+          message:
+            error.message ||
+            'Erreur lors de la récupération des prestations passées',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
   @Get('link')
   async getCalendarLink(@Query('id') id: number) {
     const calendarLink = await this.hostService.getCalendarLink(Number(id));
@@ -76,6 +97,36 @@ export class HostController {
           statusCode: HttpStatus.NOT_FOUND,
           message:
             error.message || 'Erreur lors de la récupération des logements',
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+  }
+
+  @Get(':hostId/property/:airbnbId')
+  async getSingleAirbnb(
+    @Param('hostId', ParseIntPipe) hostId: number,
+    @Param('airbnbId', ParseIntPipe) airbnbId: number,
+  ) {
+    try {
+      const property = await this.hostService.getSingleProperty(
+        hostId,
+        airbnbId,
+      );
+      if (!property) {
+        throw new Error('Aucune propriété trouvée avec cet identifiant Airbnb');
+      }
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Propriété récupérée avec succès',
+        data: property,
+      };
+    } catch (error) {
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.NOT_FOUND,
+          message:
+            error.message || 'Erreur lors de la récupération de la propriété',
         },
         HttpStatus.NOT_FOUND,
       );
