@@ -27,6 +27,7 @@ export class NotificationController {
       await this.notificationService.sendNotificationToAllPartners(
         'Enregistrement réussi',
         'Votre token de notification a été enregistré avec succès.',
+        
       );
 
       return { message: 'Token registered for all partners successfully' };

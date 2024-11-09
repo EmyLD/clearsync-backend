@@ -18,7 +18,9 @@ model User {
   createdAt   DateTime      @default(now())
   airbnbLinks AirbnbInfo[]
   PartnerInfo PartnerInfo[]
+  Prestation  Prestation[]
 }
+
 
 model PartnerInfo {
   id           Int          @id @default(autoincrement())
@@ -59,8 +61,10 @@ model Prestation {
   airbnbId    Int
   hasBeenDone Boolean      @default(false)
   isAvailable Boolean      @default(true)
+  userId      Int?
   airbnb      AirbnbInfo   @relation(fields: [airbnbId], references: [id])
   partner     PartnerInfo? @relation(fields: [partnerId], references: [id])
+  User        User?        @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([airbnbId])
 }

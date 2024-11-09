@@ -34,7 +34,7 @@ export class NotificationService {
     }
   }
 
-  async sendNotificationToAllPartners(title: string, body: string) {
+  async sendNotificationToAllPartners(title: string, body: string, data?: any) {
     try {
       // Récupérer les tokens de notification depuis la base de données
       const partners = await this.prisma.partnerInfo.findMany({
@@ -58,7 +58,7 @@ export class NotificationService {
           sound: 'default',
           title: title,
           body: body,
-          data: { title, body },
+          data: { title, body, data },
         }),
       );
 
